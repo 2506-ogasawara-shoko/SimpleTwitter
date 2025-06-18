@@ -25,25 +25,27 @@ public class SettingServlet extends HttpServlet {
 	/**
 	* ロガーインスタンスの生成
 	*/
-    Logger log = Logger.getLogger("twitter");
+	Logger log = Logger.getLogger("twitter");
 
-    /**
-    * デフォルトコンストラクタ
-    * アプリケーションの初期化を実施する。
-    */
-    public SettingServlet() {
-        InitApplication application = InitApplication.getInstance();
-        application.init();
+	/**
+	* デフォルトコンストラクタ
+	* アプリケーションの初期化を実施する。
+	*/
+	public SettingServlet() {
+		InitApplication application = InitApplication.getInstance();
+		application.init();
 
-    }
+	}
 
-    /*設定画面表示*/
-    @Override
+	/*設定画面表示*/
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		log.info(new Object() {}.getClass().getEnclosingClass().getName() +
-			" : " + new Object() {}.getClass().getEnclosingMethod().getName());
+		log.info(new Object() {
+		}.getClass().getEnclosingClass().getName() +
+				" : " + new Object() {
+				}.getClass().getEnclosingMethod().getName());
 
 		HttpSession session = request.getSession();
 		User loginUser = (User) session.getAttribute("loginUser");
@@ -54,8 +56,7 @@ public class SettingServlet extends HttpServlet {
 		request.getRequestDispatcher("setting.jsp").forward(request, response);
 	}
 
-
-    /*設定画面(更新)*/
+	/*設定画面(更新)*/
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -89,7 +90,6 @@ public class SettingServlet extends HttpServlet {
 		response.sendRedirect("./");
 	}
 
-
 	/*ユーザー情報取得*/
 	private User getUser(HttpServletRequest request) throws IOException, ServletException {
 
@@ -120,6 +120,7 @@ public class SettingServlet extends HttpServlet {
 		String account = user.getAccount();
 		String email = user.getEmail();
 
+		//パスワードが空欄の時エラーメッセージは表示しない
 		if (!StringUtils.isEmpty(name) && (20 < name.length())) {
 			errorMessages.add("名前は20文字以下で入力してください");
 		}

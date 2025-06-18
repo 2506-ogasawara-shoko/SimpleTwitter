@@ -62,29 +62,33 @@ public class MessageService {
 	/*つぶやき表示*/
 	public List<UserMessage> select() {
 
-		  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
-	        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+		log.info(new Object() {
+		}.getClass().getEnclosingClass().getName() +
+				" : " + new Object() {
+				}.getClass().getEnclosingMethod().getName());
 
-	        final int LIMIT_NUM = 1000;
+		final int LIMIT_NUM = 1000;
 
-	        Connection connection = null;
-	        try {
-	            connection = getConnection();
-	            List<UserMessage> messages = new UserMessageDao().select(connection, LIMIT_NUM);
-	            commit(connection);
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			List<UserMessage> messages = new UserMessageDao().select(connection, LIMIT_NUM);
+			commit(connection);
 
-	            return messages;
-	        } catch (RuntimeException e) {
-	            rollback(connection);
-			log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
-	            throw e;
-	        } catch (Error e) {
-	            rollback(connection);
-			log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
-	            throw e;
-	        } finally {
-	            close(connection);
-	        }
-	    }
+			return messages;
+		} catch (RuntimeException e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
 
 }

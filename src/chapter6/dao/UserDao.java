@@ -201,6 +201,7 @@ public class UserDao {
 			sql.append("    name = ?, ");
 			sql.append("    email = ?, ");
 
+			//パスワードが空欄の時は実行しない
 			if (!StringUtils.isEmpty(user.getPassword())) {
 				sql.append("    password = ?, ");
 			}
