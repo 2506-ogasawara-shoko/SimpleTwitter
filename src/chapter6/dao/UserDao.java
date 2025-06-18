@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
+
 import chapter6.beans.User;
 import chapter6.exception.NoRowsUpdatedRuntimeException;
 import chapter6.exception.SQLRuntimeException;
@@ -33,6 +35,7 @@ public class UserDao {
 
 	}
 
+	/*ユーザー新規登録*/
 	public void insert(Connection connection, User user) {
 
 		log.info(new Object() {
@@ -182,6 +185,7 @@ public class UserDao {
 		}
 	}
 
+	/*ユーザーデータ更新*/
 	public void update(Connection connection, User user) {
 
 		log.info(new Object() {
@@ -196,7 +200,11 @@ public class UserDao {
 			sql.append("    account = ?, ");
 			sql.append("    name = ?, ");
 			sql.append("    email = ?, ");
-			sql.append("    password = ?, ");
+
+			if (!StringUtils.isEmpty(user.getPassword())) {
+				sql.append("    password = ?, ");
+			}
+
 			sql.append("    description = ?, ");
 			sql.append("    updated_date = CURRENT_TIMESTAMP ");
 			sql.append("WHERE id = ?");

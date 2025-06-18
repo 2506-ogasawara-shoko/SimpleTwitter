@@ -29,6 +29,7 @@ public class MessageDao {
 
 	}
 
+	/*つぶやきを投稿*/
 	public void insert(Connection connection, Message message) {
 
 		log.info(new Object() {

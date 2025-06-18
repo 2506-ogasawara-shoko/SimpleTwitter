@@ -89,6 +89,8 @@ public class SettingServlet extends HttpServlet {
 		response.sendRedirect("./");
 	}
 
+
+	/*ユーザー情報取得*/
 	private User getUser(HttpServletRequest request) throws IOException, ServletException {
 
 		log.info(new Object() {
@@ -106,6 +108,7 @@ public class SettingServlet extends HttpServlet {
 		return user;
 	}
 
+	/*バリデーション*/
 	private boolean isValid(User user, List<String> errorMessages) {
 
 		log.info(new Object() {
@@ -115,7 +118,6 @@ public class SettingServlet extends HttpServlet {
 
 		String name = user.getName();
 		String account = user.getAccount();
-		String password = user.getPassword();
 		String email = user.getEmail();
 
 		if (!StringUtils.isEmpty(name) && (20 < name.length())) {
@@ -125,9 +127,6 @@ public class SettingServlet extends HttpServlet {
 			errorMessages.add("アカウント名を入力してください");
 		} else if (20 < account.length()) {
 			errorMessages.add("アカウント名は20文字以下で入力してください");
-		}
-		if (StringUtils.isEmpty(password)) {
-			errorMessages.add("パスワードを入力してください");
 		}
 		if (!StringUtils.isEmpty(email) && (50 < email.length())) {
 			errorMessages.add("メールアドレスは50文字以下で入力してください");

@@ -37,6 +37,7 @@ public class MessageServlet extends HttpServlet {
 
 	}
 
+	/*つぶやきを投稿*/
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -73,7 +74,7 @@ public class MessageServlet extends HttpServlet {
 				" : " + new Object() {
 				}.getClass().getEnclosingMethod().getName());
 
-		if (StringUtils.isEmpty(text)) {
+		if (StringUtils.isBlank(text)) {
 			errorMessages.add("メッセージを入力してください");
 		} else if (140 < text.length()) {
 			errorMessages.add("140文字以下で入力してください");

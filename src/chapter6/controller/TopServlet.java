@@ -35,6 +35,7 @@ public class TopServlet extends HttpServlet {
 
 	}
 
+	/*つぶやき表示*/
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {

@@ -31,6 +31,7 @@ public class MessageService {
 
 	}
 
+	/*つぶやきを投稿*/
 	public void insert(Message message) {
 
 		log.info(new Object() {
@@ -58,6 +59,7 @@ public class MessageService {
 		}
 	}
 
+	/*つぶやき表示*/
 	public List<UserMessage> select() {
 
 		  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
