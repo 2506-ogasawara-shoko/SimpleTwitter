@@ -120,6 +120,12 @@ public class SettingServlet extends HttpServlet {
 		String account = user.getAccount();
 		String email = user.getEmail();
 
+		//ユーザーの重複があった場合はエラーメッセージ
+		User doubleUser = new UserService().select(account);
+		if (doubleUser != null) {
+			errorMessages.add("ユーザーが重複しています");
+		}
+
 		if (!StringUtils.isEmpty(name) && (20 < name.length())) {
 			errorMessages.add("名前は20文字以下で入力してください");
 		}

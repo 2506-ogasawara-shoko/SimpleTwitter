@@ -63,6 +63,27 @@ public class UserService {
 		}
 	}
 
+	/*String型の引数をもつ、selectメソッドを追加する(実践課題③)*/
+	public User select(String account) {
+
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			User user = new UserDao().select(connection, account);
+			commit(connection);
+
+			return user;
+		} catch (RuntimeException e) {
+			rollback(connection);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
+
 	/*ログイン時*/
 	public User select(String accountOrEmail, String password) {
 
