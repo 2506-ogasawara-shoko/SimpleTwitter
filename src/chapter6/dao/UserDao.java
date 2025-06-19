@@ -202,7 +202,7 @@ public class UserDao {
 			sql.append("    email = ?, ");
 
 			//パスワードが空欄の時は実行しない
-			if (!StringUtils.isEmpty(user.getPassword())) {
+			if (!StringUtils.isBlank(user.getPassword())) {
 				sql.append("    password = ?, ");
 			}
 
@@ -216,7 +216,7 @@ public class UserDao {
 			ps.setString(2, user.getName());
 			ps.setString(3, user.getEmail());
 			//パスワードが空欄の時はパスワードを更新しない
-			if (!StringUtils.isEmpty(user.getPassword())) {
+			if (!StringUtils.isBlank(user.getPassword())) {
 				ps.setString(4, user.getPassword());
 				ps.setString(5, user.getDescription());
 				ps.setInt(6, user.getId());
