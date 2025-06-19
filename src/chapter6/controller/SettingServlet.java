@@ -122,7 +122,7 @@ public class SettingServlet extends HttpServlet {
 
 		//ユーザーの重複があった場合はエラーメッセージ
 		User doubleUser = new UserService().select(account);
-		if (doubleUser != null) {
+		if (doubleUser != null && doubleUser.getId() != user.getId()) {
 			errorMessages.add("すでに存在するアカウントです");
 		}
 
