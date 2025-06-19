@@ -33,7 +33,7 @@ public class UserMessageDao {
 	}
 
 	/*つぶやき表示*/
-	public List<UserMessage> select(Connection connection, int num) {
+	public List<UserMessage> select(Connection connection, Integer userId, int num) {
 
 		log.info(new Object() {
 		}.getClass().getEnclosingClass().getName() +
@@ -53,12 +53,23 @@ public class UserMessageDao {
 			sql.append("FROM messages ");
 			sql.append("INNER JOIN users ");
 			sql.append("ON messages.user_id = users.id ");
+			//idがnull以外だったら、その値に対応するユーザーIDの投稿を取得する
+			if (userId != null) {
+				sql.append("WHERE user_id = ? ");
+			}
 			sql.append("ORDER BY created_date DESC limit " + num);
 
 			ps = connection.prepareStatement(sql.toString());
 
+			//idがnull以外だったら、対応するユーザーIDの情報を取得する
+			if (userId != null) {
+				ps.setInt(1, userId);
+			}
+
+			//SQLを実行し、結果をResultSetに入れる
 			ResultSet rs = ps.executeQuery();
 
+			//ResultSetからUserMessageのListに詰め替える
 			List<UserMessage> messages = toUserMessages(rs);
 			return messages;
 		} catch (SQLException e) {
@@ -70,6 +81,7 @@ public class UserMessageDao {
 		}
 	}
 
+	//つぶやき情報を入れるList
 	private List<UserMessage> toUserMessages(ResultSet rs) throws SQLException {
 
 		log.info(new Object() {
@@ -79,6 +91,7 @@ public class UserMessageDao {
 
 		List<UserMessage> messages = new ArrayList<UserMessage>();
 		try {
+			//ResuluSetから1レコード取り出す
 			while (rs.next()) {
 				UserMessage message = new UserMessage();
 				message.setId(rs.getInt("id"));
