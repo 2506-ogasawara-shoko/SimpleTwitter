@@ -4,11 +4,15 @@ import static chapter6.utils.CloseableUtil.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import chapter6.beans.Message;
+import chapter6.exception.NoRowsUpdatedRuntimeException;
 import chapter6.exception.SQLRuntimeException;
 import chapter6.logging.InitApplication;
 
@@ -67,8 +71,33 @@ public class MessageDao {
 		}
 	}
 
-	//つぶやき削除
-	public void delete(Connection connection, Message message) {
+	private List<Message> toMessages(ResultSet rs) throws SQLException {
+
+		log.info(new Object() {
+		}.getClass().getEnclosingClass().getName() +
+				" : " + new Object() {
+				}.getClass().getEnclosingMethod().getName());
+
+		List<Message> messages = new ArrayList<Message>();
+		try {
+			while (rs.next()) {
+				Message message = new Message();
+				message.setId(rs.getInt("id"));
+				message.setUserId(rs.getInt("user_id"));
+				message.setText(rs.getString("text"));
+				message.setCreatedDate(rs.getTimestamp("created_date"));
+				message.setUpdatedDate(rs.getTimestamp("updated_date"));
+
+				messages.add(message);
+			}
+			return messages;
+		} finally {
+			close(rs);
+		}
+	}
+
+	/*つぶやき削除*/
+	public void delete(Connection connection, int id) {
 
 		log.info(new Object() {
 		}.getClass().getEnclosingClass().getName() +
@@ -82,7 +111,7 @@ public class MessageDao {
 
 			ps = connection.prepareStatement(sql.toString());
 
-			ps.setInt(1, message.getId());
+			ps.setInt(1, id);
 
 			ps.executeUpdate();
 		} catch (SQLException e) {
@@ -93,4 +122,76 @@ public class MessageDao {
 			close(ps);
 		}
 	}
+
+	/*編集画面表示*/
+	public Message select(Connection connection, int id) {
+
+		log.info(new Object() {
+		}.getClass().getEnclosingClass().getName() +
+				" : " + new Object() {
+				}.getClass().getEnclosingMethod().getName());
+
+		PreparedStatement ps = null;
+		try {
+			String sql = "SELECT * FROM messages WHERE id = ?";
+
+			ps = connection.prepareStatement(sql);
+
+			ps.setInt(1, id);
+
+			ResultSet rs = ps.executeQuery();
+
+			List<Message> messages = toMessages(rs);
+
+			//idが存在しているか
+			if (messages.isEmpty()) {
+				return null;
+			} else {
+				return messages.get(0);
+			}
+
+		} catch (SQLException e) {
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw new SQLRuntimeException(e);
+		} finally {
+			close(ps);
+		}
+	}
+
+	/*つぶやき更新*/
+	public void update(Connection connection, Message message) {
+
+		log.info(new Object() {
+		}.getClass().getEnclosingClass().getName() +
+				" : " + new Object() {
+				}.getClass().getEnclosingMethod().getName());
+
+		PreparedStatement ps = null;
+		try {
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE messages SET ");
+			sql.append("    text = ?, ");
+			sql.append("    updated_date = CURRENT_TIMESTAMP ");
+			sql.append("WHERE id = ?");
+
+			ps = connection.prepareStatement(sql.toString());
+
+			ps.setString(1, message.getText());
+			ps.setInt(2, message.getId());
+
+			int count = ps.executeUpdate();
+			if (count == 0) {
+				log.log(Level.SEVERE, "更新対象のレコードが存在しません", new NoRowsUpdatedRuntimeException());
+				throw new NoRowsUpdatedRuntimeException();
+			}
+		} catch (SQLException e) {
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw new SQLRuntimeException(e);
+		} finally {
+			close(ps);
+		}
+	}
+
 }

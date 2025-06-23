@@ -73,7 +73,7 @@
 						</span> <span class="name"><c:out value="${message.name}" /></span>
 					</div>
 					<div class="text">
-						<c:out value="${message.text}" />
+						<pre><c:out value="${message.text}" /></pre>
 					</div>
 					<div class="date">
 						<fmt:formatDate value="${message.createdDate}"
@@ -82,8 +82,12 @@
 
 					<div class="button-area">
 						<c:if test="${ loginUser.id == message.userId }">
+							<form action="edit" method="get">
+								<input type="hidden" name="message" value="${message.id}">
+								<input type="submit" value="編集">
+							</form>
 							<form action="deleteMessage" method="post">
-								<input type="hidden" name="_method" value="DELETE">
+								<input type="hidden" name="message" value="${message.id}">
 								<input type="submit" value="削除">
 							</form>
 						</c:if>
