@@ -52,29 +52,28 @@ public class EditServlet extends HttpServlet {
 		List<String> errorMessages = new ArrayList<String>();
 
 		String messageGetId = request.getParameter("message");
+		User user = (User) request.getSession().getAttribute("loginUser");
+
+		//messageの宣言をnullで行う
+		Message message = null;
 
 		//idが空白でないか、数字以外の文字でないか
-		if (StringUtils.isBlank(messageGetId) || !(messageGetId.matches("^[0-9]+$"))) {
+		//チェックがokだった場合、selectに進む
+		if (!(StringUtils.isBlank(messageGetId)) && (messageGetId.matches("^[0-9]+$"))) {
+			int messageId = Integer.parseInt(messageGetId);
+			message = new MessageService().select(messageId);
+		}
+
+		/* select結果をチェック
+		* 入力したidが存在しているか、ログインユーザーと投稿者が一致しているか
+		*/
+		if (message == null || message.getUserId() != user.getId()) {
 			errorMessages.add("不正なパラメータが入力されました");
-			request.setAttribute("errorMessages", errorMessages);
-			request.getRequestDispatcher("./").forward(request, response);
+			session.setAttribute("errorMessages", errorMessages);
+			response.sendRedirect("./");
 			return;
 		}
 
-		int messageId = Integer.parseInt(messageGetId);
-
-		User user = (User) request.getSession().getAttribute("loginUser");
-		Message message = new MessageService().select(messageId);
-
-		//入力したidが存在しているか
-		if (message == null) {
-			errorMessages.add("不正なパラメータが入力されました");
-			request.setAttribute("errorMessages", errorMessages);
-			request.getRequestDispatcher("./").forward(request, response);
-			return;
-		}
-
-		session.setAttribute("loginUser", user);
 		session.setAttribute("message", message);
 		request.getRequestDispatcher("edit.jsp").forward(request, response);
 	}
@@ -92,40 +91,29 @@ public class EditServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		List<String> errorMessages = new ArrayList<String>();
 
-		Message message = getMessage(request);
-		if (isValid(message, errorMessages)) {
+		Message message = new Message();
+
+		message.setId(Integer.parseInt(request.getParameter("id")));
+		message.setText(request.getParameter("text"));
+
+		if (!isValid(message, errorMessages)) {
 			try {
-				new MessageService().update(message);
+				//isValidでとってきたエラーメッセージ
+				request.setAttribute("errorMessages", errorMessages);
+				request.setAttribute("message", message);
+				request.getRequestDispatcher("edit.jsp").forward(request, response);
+				return;
 			} catch (NoRowsUpdatedRuntimeException e) {
 				log.warning("他の人によって更新されています。最新のデータを表示しました。データを確認してください。");
 				errorMessages.add("他の人によって更新されています。最新のデータを表示しました。データを確認してください。");
 			}
 		}
 
-		if (errorMessages.size() != 0) {
-			request.setAttribute("errorMessages", errorMessages);
-			request.setAttribute("message", message);
-			request.getRequestDispatcher("edit.jsp").forward(request, response);
-			return;
-		}
+		//isValidでエラーメッセージを取得しなかった場合
+		new MessageService().update(message);
 
 		session.setAttribute("message", message);
 		response.sendRedirect("./");
-	}
-
-	/*つぶやき情報取得*/
-	private Message getMessage(HttpServletRequest request) throws IOException, ServletException {
-
-		log.info(new Object() {
-		}.getClass().getEnclosingClass().getName() +
-				" : " + new Object() {
-				}.getClass().getEnclosingMethod().getName());
-
-		Message message = new Message();
-		message.setId(Integer.parseInt(request.getParameter("id")));
-		message.setUserId(Integer.parseInt(request.getParameter("userId")));
-		message.setText(request.getParameter("text"));
-		return message;
 	}
 
 	/*バリデーション*/

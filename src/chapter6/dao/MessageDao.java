@@ -146,9 +146,9 @@ public class MessageDao {
 			//idが存在しているか
 			if (messages.isEmpty()) {
 				return null;
-			} else {
-				return messages.get(0);
 			}
+			return messages.get(0);
+
 
 		} catch (SQLException e) {
 			log.log(Level.SEVERE, new Object() {
