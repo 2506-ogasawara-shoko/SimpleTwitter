@@ -67,6 +67,7 @@ public class MessageServlet extends HttpServlet {
 		response.sendRedirect("./");
 	}
 
+	/*バリデーション*/
 	private boolean isValid(String text, List<String> errorMessages) {
 
 		log.info(new Object() {

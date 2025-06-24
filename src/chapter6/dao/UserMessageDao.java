@@ -81,7 +81,7 @@ public class UserMessageDao {
 		}
 	}
 
-	//つぶやき情報を入れるList
+	/*つぶやき情報を入れるList*/
 	private List<UserMessage> toUserMessages(ResultSet rs) throws SQLException {
 
 		log.info(new Object() {

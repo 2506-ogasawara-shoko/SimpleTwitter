@@ -85,6 +85,7 @@ public class SignUpServlet extends HttpServlet {
 		return user;
 	}
 
+	/*バリデーション*/
 	private boolean isValid(User user, List<String> errorMessages) {
 
 		log.info(new Object() {
