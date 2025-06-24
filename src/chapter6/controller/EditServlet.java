@@ -15,8 +15,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 
 import chapter6.beans.Message;
-import chapter6.beans.User;
-import chapter6.exception.NoRowsUpdatedRuntimeException;
 import chapter6.logging.InitApplication;
 import chapter6.service.MessageService;
 
@@ -52,7 +50,6 @@ public class EditServlet extends HttpServlet {
 		List<String> errorMessages = new ArrayList<String>();
 
 		String messageGetId = request.getParameter("message");
-		User user = (User) request.getSession().getAttribute("loginUser");
 
 		//messageの宣言をnullで行う
 		Message message = null;
@@ -64,17 +61,16 @@ public class EditServlet extends HttpServlet {
 			message = new MessageService().select(messageId);
 		}
 
-		/* select結果をチェック
-		* 入力したidが存在しているか、ログインユーザーと投稿者が一致しているか
-		*/
-		if (message == null || message.getUserId() != user.getId()) {
+		//select結果をチェック(入力したidが存在しているか)
+		if (message == null) {
 			errorMessages.add("不正なパラメータが入力されました");
 			session.setAttribute("errorMessages", errorMessages);
 			response.sendRedirect("./");
 			return;
 		}
 
-		session.setAttribute("message", message);
+		//1件分のメッセージを格納
+		request.setAttribute("message", message);
 		request.getRequestDispatcher("edit.jsp").forward(request, response);
 	}
 
@@ -88,31 +84,23 @@ public class EditServlet extends HttpServlet {
 				" : " + new Object() {
 				}.getClass().getEnclosingMethod().getName());
 
-		HttpSession session = request.getSession();
 		List<String> errorMessages = new ArrayList<String>();
-
 		Message message = new Message();
 
 		message.setId(Integer.parseInt(request.getParameter("id")));
 		message.setText(request.getParameter("text"));
 
 		if (!isValid(message, errorMessages)) {
-			try {
 				//isValidでとってきたエラーメッセージ
 				request.setAttribute("errorMessages", errorMessages);
 				request.setAttribute("message", message);
 				request.getRequestDispatcher("edit.jsp").forward(request, response);
 				return;
-			} catch (NoRowsUpdatedRuntimeException e) {
-				log.warning("他の人によって更新されています。最新のデータを表示しました。データを確認してください。");
-				errorMessages.add("他の人によって更新されています。最新のデータを表示しました。データを確認してください。");
-			}
 		}
 
 		//isValidでエラーメッセージを取得しなかった場合
 		new MessageService().update(message);
 
-		session.setAttribute("message", message);
 		response.sendRedirect("./");
 	}
 
