@@ -92,7 +92,6 @@
 							</form>
 						</c:if>
 					</div>
-
 				</div>
 			</c:forEach>
 		</div>
