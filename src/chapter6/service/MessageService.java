@@ -109,12 +109,14 @@ public class MessageService {
 				id = Integer.parseInt(userId);
 			}
 
+			String end = null;
+
 			/*
 			* messageDao.selectに引数としてInteger型のidを追加
 			* idがnullだったら全件取得する
 			* idがnull以外だったら、その値に対応するユーザーIDの投稿を取得する
 			*/
-			List<UserMessage> messages = new UserMessageDao().select(connection, id, LIMIT_NUM);
+			List<UserMessage> messages = new UserMessageDao().select(connection, id, end, LIMIT_NUM);
 
 			commit(connection);
 
