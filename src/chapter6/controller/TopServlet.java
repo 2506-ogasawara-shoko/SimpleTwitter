@@ -60,8 +60,16 @@ public class TopServlet extends HttpServlet {
 		 */
 		String userId = request.getParameter("user_id");
 
-		List<UserMessage> messages = new MessageService().select(userId);
+		//（つぶやきの絞り込み）request.getParameterで日付取得
+		String start = request.getParameter("start");
+		String end = request.getParameter("end");
+
+		List<UserMessage> messages = new MessageService().select(userId, start, end);
 		List<UserComment> comments = new CommentService().select();
+
+		//（つぶやきの絞り込み）request.setAttributeでJSPに返す
+		request.setAttribute("start", start);
+		request.setAttribute("end", end);
 
 		request.setAttribute("messages", messages);
 		request.setAttribute("comments", comments);

@@ -24,6 +24,16 @@
 			</c:if>
 		</div>
 
+		<%-- 日時絞り込み --%>
+		<div class="date-form">
+			<form method="get">
+				日付：
+				<input name="start" type="date" /> ～
+				<input name="end" type="date" />
+				<input type="submit" value="絞り込み">
+			</form>
+		</div>
+
 		<c:if test="${ not empty loginUser }">
 			<div class="profile">
 				<div class="name">

@@ -4,6 +4,8 @@ import static chapter6.utils.CloseableUtil.*;
 import static chapter6.utils.DBUtil.*;
 
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -93,7 +95,7 @@ public class MessageService {
 	* つぶやき表示
 	* selectの引数にString型のuserIdを追加(実践課題②)
 	*/
-	public List<UserMessage> select(String userId) {
+	public List<UserMessage> select(String userId, String start, String end) {
 		final int LIMIT_NUM = 1000;
 
 		Connection connection = null;
@@ -109,14 +111,32 @@ public class MessageService {
 				id = Integer.parseInt(userId);
 			}
 
-			String end = null;
+			//（つぶやきの絞り込み）
+			//start（end）が入力されたら時刻設定、そうでなければデフォルト値
+			if (start != "" && start != null) {
+				start = start + " 00:00:00";
+			} else {
+				start = "2020/01/01 00:00:00";
+			}
+			if (end != ""&& end != null) {
+				end = end + " 23:59:59";
+			} else {
+				Date date = new Date();
+				//フォーマット指定
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				String defaultEnd = sdf.format(date);
+				end = defaultEnd;
+			}
 
 			/*
+			* (実践課題②)
 			* messageDao.selectに引数としてInteger型のidを追加
-			* idがnullだったら全件取得する
-			* idがnull以外だったら、その値に対応するユーザーIDの投稿を取得する
+			* idがnullなら全件取得、null以外ならその値に対応するユーザーIDの投稿を取得する
+			*
+			* (つぶやきの絞り込み)
+			* デフォルト値をとってくる
 			*/
-			List<UserMessage> messages = new UserMessageDao().select(connection, id, end, LIMIT_NUM);
+			List<UserMessage> messages = new UserMessageDao().select(connection, id, start, end, LIMIT_NUM);
 
 			commit(connection);
 

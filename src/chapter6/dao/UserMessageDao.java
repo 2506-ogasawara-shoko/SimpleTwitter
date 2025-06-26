@@ -33,7 +33,7 @@ public class UserMessageDao {
 	}
 
 	/*つぶやき表示*/
-	public List<UserMessage> select(Connection connection, Integer userId, String end, int num) {
+	public List<UserMessage> select(Connection connection, Integer userId, String start, String end, int num) {
 
 		log.info(new Object() {
 		}.getClass().getEnclosingClass().getName() +
@@ -52,20 +52,19 @@ public class UserMessageDao {
 			sql.append("    messages.created_date as created_date ");
 			sql.append("FROM messages ");
 			sql.append("INNER JOIN users ");
-			//開始日時と終了日時
-			sql.append("WHERE start = ?, ");
-			sql.append("      end = ? ");
 			sql.append("ON messages.user_id = users.id ");
+			//（つぶやきの絞り込み）日付の範囲指定
+			sql.append("WHERE messages.created_date BETWEEN ? AND ? ");
 			//idがnull以外だったら、その値に対応するユーザーIDの投稿を取得する
 			if (userId != null) {
-				sql.append("WHERE user_id = ? ");
+				sql.append("AND user_id = ? ");
 			}
 			sql.append("ORDER BY created_date DESC limit " + num);
 
 			ps = connection.prepareStatement(sql.toString());
 
-			ps.setString(1, "2020-01-01 00:00:00");
-			//serviceから終了日時をとってくる
+			//（つぶやきの絞り込み）serviceからデフォルトの終了日時をとってくる
+			ps.setString(1, start);
 			ps.setString(2, end);
 
 			//idがnull以外だったら、対応するユーザーIDの情報を取得する
