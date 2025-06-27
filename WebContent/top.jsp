@@ -9,6 +9,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>簡易Twitter</title>
 <link href="./css/style.css" rel="stylesheet" type="text/css">
+<%-- JavaScript、jQueryの読み込み --%>
+<script src = "./js/jquery-3.7.1.min.js" ></script>
+<script src = "./js/jquery-3.7.1.js" ></script>
+<script src = "./js/main.js" ></script>
 </head>
 <body>
 	<div class="main-contents">
@@ -101,7 +105,7 @@
 							</form>
 							<form action="deleteMessage" method="post">
 								<input type="hidden" name="message" value="${message.id}">
-								<input type="submit" value="削除">
+								<input type="submit" id="delete" value="削除">
 							</form>
 						</c:if>
 					</div>
