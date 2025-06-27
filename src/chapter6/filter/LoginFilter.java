@@ -28,7 +28,7 @@ public class LoginFilter implements Filter {
 		HttpServletRequest httpReq = (HttpServletRequest) request;
 		HttpServletResponse httpRes = (HttpServletResponse) response;
 
-		HttpSession session = (httpReq).getSession();
+		HttpSession session = httpReq.getSession();
 		User user = (User) session.getAttribute("loginUser");
 
 		/*
@@ -42,7 +42,7 @@ public class LoginFilter implements Filter {
 			List<String> errorMessages = new ArrayList<String>();
 			errorMessages.add("ログインをしてください");
 			session.setAttribute("errorMessages", errorMessages);
-			httpRes.sendRedirect("/SimpleTwitter/login");
+			httpRes.sendRedirect("./login");
 			return;
 		}
 

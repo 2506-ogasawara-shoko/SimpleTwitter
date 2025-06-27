@@ -128,7 +128,7 @@
 									<span class="account">
 										<c:out value="${comment.account}" />
 									</span>
-										<span class="name"><c:out value="${comment.name}" /></span>
+									<span class="name"><c:out value="${comment.name}" /></span>
 								</div>
 
 								<div class="text">

@@ -113,19 +113,18 @@ public class MessageService {
 
 			//（つぶやきの絞り込み）
 			//start（end）が入力されたら時刻設定、そうでなければデフォルト値
-			if (start != "" && start != null) {
-				start = start + " 00:00:00";
+			if (!StringUtils.isBlank(start)) {
+				start += " 00:00:00";
 			} else {
 				start = "2020/01/01 00:00:00";
 			}
-			if (end != ""&& end != null) {
-				end = end + " 23:59:59";
+			if (!StringUtils.isBlank(end)) {
+				end += " 23:59:59";
 			} else {
 				Date date = new Date();
 				//フォーマット指定
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				String defaultEnd = sdf.format(date);
-				end = defaultEnd;
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				end = sdf.format(date);
 			}
 
 			/*
